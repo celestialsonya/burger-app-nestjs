@@ -4,38 +4,28 @@ import { PoolClient } from "pg";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { User } from "../entities/User";
 import { Order } from "../entities/Order";
+import { CountableProduct, ProductQuantity } from "../../types";
 
 @Injectable()
 export class OrderRepository {
     constructor(@Inject(pg_conn) private db: PoolClient) {}
 
-    async createOrder(
-        dto: CreateOrderDto,
-        user: User,
-        cartId: number,
-        userId: number,
-        cartProducts: any,
-        amount: number,
-        delivery: boolean,
-        deliveryDetails: any,
-        data: string
-    ): Promise<Order> {
+    async createOrder(dto: CreateOrderDto): Promise<Order> {
         // create order:
-
         const sqlCreateOrder = `insert into orders (user_id, cart, username,
                 phone_number, amount, delivery, delivery_details, status, data) values ($1, $2, $3, 
                 $4, $5, $6, $7, $8, $9) returning *`;
 
         const valuesCreateOrder = [
-            userId,
-            cartProducts,
+            dto.userId,
+            dto.cartProducts,
             dto.username,
             dto.phone_number,
-            amount,
-            delivery,
-            deliveryDetails,
+            dto.amount,
+            dto.delivery,
+            dto.deliveryDetails,
             "not confirmed",
-            data
+            dto.data
         ];
         const orderData = await this.db.query(sqlCreateOrder, valuesCreateOrder);
         const order = orderData.rows[0];
@@ -52,21 +42,18 @@ export class OrderRepository {
         return orders;
     }
 
-    async calculateAmount(cartId: number): Promise<any> {
-        const sqlAmount = "select price, quantity from cart_product cp join product p on cp.product_id = p.id where cp.cart_id = $1";
-        const valuesAmount = [cartId];
-        const data = await this.db.query(sqlAmount, valuesAmount);
-        const price = data.rows;
+    async getCountableProducts(cart: ProductQuantity[]): Promise<CountableProduct[]> {
+        // we have: [{"product_id": 1, "quantity": 2}, {"product_id": 2, "quantity": 1}]
 
-        return price;
-    }
+        return Promise.all(
+            cart.map(async (p) => {
+                const values = [p.product_id];
+                const sql = "select price from product where id = $1";
+                const { rows } = await this.db.query(sql, values);
+                const price = rows[0].price;
 
-    async addedProductsByCart(dto: CreateOrderDto, cartId: number) {
-        // added to cart_product:
-        dto.cart.map(async (p: any) => {
-            const sql = `insert into cart_product (cart_id, product_id, quantity) values ($1, $2, $3) returning *`;
-            const values = [cartId, p.product_id, p.quantity];
-            const { rows } = await this.db.query(sql, values);
-        });
+                return { price: price, quantity: p.quantity };
+            })
+        );
     }
 }

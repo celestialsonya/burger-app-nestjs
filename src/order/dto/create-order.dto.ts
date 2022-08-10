@@ -1,9 +1,12 @@
 import { DeliveryDetails } from "../../entities/DeliveryDetails";
 
 export class CreateOrderDto {
-    cart: object[];
     username: string;
     phone_number: string;
     delivery: boolean;
-    delivery_details?: DeliveryDetails;
+    userId: number;
+    cartProducts: string[];
+    amount: number;
+    deliveryDetails: DeliveryDetails;
+    data: string;
 }
