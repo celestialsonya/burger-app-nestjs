@@ -21,7 +21,7 @@ export class AuthModule implements NestModule {
     public configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(AuthMiddleware)
-            .exclude("auth/register", "auth/login")
+            .exclude("users/register", "users/login")
             .forRoutes(AuthController);
     }
 }

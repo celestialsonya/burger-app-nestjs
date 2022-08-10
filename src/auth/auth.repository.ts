@@ -8,13 +8,6 @@ import { CreateUserDto } from "./dto/create-user.dto";
 export class AuthRepository {
     constructor(@Inject(pg_conn) private db: PoolClient) {}
 
-    async getUsers(): Promise<User[]> {
-        const sql = "select * from users";
-        const { rows } = await this.db.query(sql);
-
-        return rows[0];
-    }
-
     async register(dto: CreateUserDto): Promise<number> {
         // create auth and adding to database:
         const sql =
@@ -37,5 +30,12 @@ export class AuthRepository {
         }
 
         return null;
+    }
+
+    async getUsers(): Promise<User[]> {
+        const sql = "select * from users";
+        const { rows } = await this.db.query(sql);
+
+        return rows;
     }
 }

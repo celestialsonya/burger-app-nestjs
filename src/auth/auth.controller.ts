@@ -10,7 +10,7 @@ import {
 } from "./auth.errors";
 import { CartService } from "../cart/cart.service";
 
-@Controller("/auth")
+@Controller("/users")
 export class AuthController {
     constructor(
         private authService: AuthService,
