@@ -2,19 +2,15 @@ import { Inject, Injectable } from "@nestjs/common";
 import { AuthRepository } from "./auth.repository";
 import { User } from "../entities/User";
 import { CreateUserDto } from "./dto/create-user.dto";
-import {
-    InvalidUsername,
-    UserAlreadyExists,
-    UserDoesNotExist
-} from "./auth.errors";
+import { InvalidUsername, UserAlreadyExists, UserDoesNotExist } from "./auth.errors";
 import * as jwt from "jsonwebtoken";
 
 @Injectable()
 export class AuthService {
     constructor(private authRepository: AuthRepository) {}
 
-    generateAccessToken(id: number, cartId: any) {
-        const payload = { id, cartId };
+    generateAccessToken(id: number) {
+        const payload = { id };
         return jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
     }
 

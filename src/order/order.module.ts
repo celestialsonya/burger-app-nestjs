@@ -4,11 +4,10 @@ import { OrderController } from "./order.controller";
 import { OrderService } from "./order.service";
 import { OrderRepository } from "./order.repository";
 import { AuthRepository } from "../auth/auth.repository";
-import { CartRepository } from "../cart/cart.repository";
 
 @Module({
     imports: [DbModule],
     controllers: [OrderController],
-    providers: [OrderService, OrderRepository, AuthRepository, CartRepository]
+    providers: [OrderService, OrderRepository, AuthRepository]
 })
 export class OrderModule {}

@@ -1,21 +1,12 @@
 import { Controller, Get, Inject, Post, Req, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
-import { AuthRepository } from "./auth.repository";
 import { CreateUserDto } from "./dto/create-user.dto";
-import {
-    InvalidUsername,
-    UserAlreadyExists,
-    UserDoesNotExist
-} from "./auth.errors";
-import { CartService } from "../cart/cart.service";
+import { InvalidUsername, UserAlreadyExists, UserDoesNotExist } from "./auth.errors";
 
 @Controller("/users")
 export class AuthController {
-    constructor(
-        private authService: AuthService,
-        private cartService: CartService
-    ) {}
+    constructor(private authService: AuthService) {}
 
     @Post("/register")
     async register(@Req() req: Request, @Res() res: Response) {
@@ -30,10 +21,9 @@ export class AuthController {
 
         try {
             const id = await this.authService.register(dto);
-            const cartId = await this.cartService.createCart(id);
-            const token = this.authService.generateAccessToken(id, cartId);
+            const token = this.authService.generateAccessToken(id);
 
-            return res.status(201).send({ id, cartId, token });
+            return res.status(201).send({ id, token });
         } catch (e) {
             console.log(e);
             if (e instanceof UserAlreadyExists) {
@@ -50,10 +40,9 @@ export class AuthController {
 
         try {
             const id = await this.authService.login(dto);
-            const cartId = await this.cartService.getCart(id);
-            const token = this.authService.generateAccessToken(id, cartId);
+            const token = this.authService.generateAccessToken(id);
 
-            return res.status(200).send({ id, cartId, token });
+            return res.status(200).send({ id, token });
         } catch (e) {
             console.log(e);
             if (e instanceof UserDoesNotExist) {

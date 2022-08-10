@@ -5,14 +5,13 @@ import { Order } from "../entities/Order";
 import { DeliveryDetails } from "../entities/DeliveryDetails";
 import { AuthRepository } from "../auth/auth.repository";
 import { User } from "../entities/User";
-import { CartRepository } from "../cart/cart.repository";
 import { SpamOrders } from "./order.errors";
 import { getCurrentData } from "../helpers/getCurrentData";
 import { ProductQuantity } from "../../types";
 
 @Injectable()
 export class OrderService {
-    constructor(private orderRepository: OrderRepository, private authRepository: AuthRepository, private cartRepository: CartRepository) {}
+    constructor(private orderRepository: OrderRepository, private authRepository: AuthRepository) {}
 
     async createOrder(dto: CreateOrderDto): Promise<Order> {
         const order: Order = await this.orderRepository.createOrder(dto);
