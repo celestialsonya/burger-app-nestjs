@@ -3,6 +3,7 @@ import { pg_conn } from "../packages/database/db.module";
 import { PoolClient } from "pg";
 import { User } from "../entities/User";
 import { CreateUserDto } from "./dto/create-user.dto";
+import {Role} from "../../types";
 
 @Injectable()
 export class AuthRepository {
@@ -11,8 +12,9 @@ export class AuthRepository {
     async register(dto: CreateUserDto): Promise<number> {
         // create auth and adding to database:
         const sql =
-            "insert into users (username, phone_number) values ($1, $2) returning id";
-        const values = [dto.username, dto.phone_number];
+            "insert into users (username, phone_number, role) values ($1, $2, $3) returning id";
+
+        const values = [dto.username, dto.phone_number, Role.USER];
 
         const { rows } = await this.db.query(sql, values);
         const { id } = rows[0];
@@ -37,5 +39,13 @@ export class AuthRepository {
         const { rows } = await this.db.query(sql);
 
         return rows;
+    }
+
+    async getRoleById(userId: number): Promise<Role>{
+        const sql = "select role from users where id = $1"
+        const values = [userId]
+        const {rows} = await this.db.query(sql, values)
+
+        return rows[0]
     }
 }

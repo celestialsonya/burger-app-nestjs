@@ -6,7 +6,7 @@ import { DeliveryDetails } from "../entities/DeliveryDetails";
 import { AuthRepository } from "../auth/auth.repository";
 import { User } from "../entities/User";
 import { SpamOrders } from "./order.errors";
-import { getCurrentData } from "../helpers/getCurrentData";
+import { getCurrentDate } from "../helpers/getCurrentDate";
 import { ProductQuantity } from "../../types";
 
 @Injectable()

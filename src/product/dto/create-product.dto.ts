@@ -1,13 +1,23 @@
-export class CreateProductDto {
-    name: string;
-    description: string;
-    price: number;
-    category: ProductCategories;
-}
+import {IsEmail, IsEnum, IsNotEmpty, isNotEmpty, IsNumber, IsString, isString} from "class-validator";
 
-enum ProductCategories {
+export enum ProductCategories {
     drinks = "drinks",
     burgers = "burgers",
     snacks = "snacks",
     desserts = "desserts"
 }
+
+export class CreateProductDto {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+    @IsNotEmpty()
+    @IsString()
+    description: string;
+    @IsNotEmpty()
+    @IsNumber()
+    price: number;
+    @IsEnum(ProductCategories, {each: true})
+    category: ProductCategories;
+}
+

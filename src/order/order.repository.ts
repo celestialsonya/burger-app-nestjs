@@ -25,7 +25,7 @@ export class OrderRepository {
             dto.delivery,
             dto.deliveryDetails,
             "not confirmed",
-            dto.data
+            dto.date
         ];
         const orderData = await this.db.query(sqlCreateOrder, valuesCreateOrder);
         const order = orderData.rows[0];

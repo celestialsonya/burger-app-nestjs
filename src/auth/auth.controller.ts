@@ -1,8 +1,10 @@
-import { Controller, Get, Inject, Post, Req, Res } from "@nestjs/common";
+import {Controller, Get, Inject, Post, Req, Res, UseGuards} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { InvalidUsername, UserAlreadyExists, UserDoesNotExist } from "./auth.errors";
+import {Roles} from "./roles-auth.decorator";
+import {RolesGuard} from "./quards/roles.quard";
 
 @Controller("/users")
 export class AuthController {
@@ -10,18 +12,14 @@ export class AuthController {
 
     @Post("/register")
     async register(@Req() req: Request, @Res() res: Response) {
-        // todo: create validation using class-validator
-        // const errors = validationResult(req)
-        // if (!errors.isEmpty()){
-        //     const message = errors.array()[0].msg
-        //     return res.status(400).send(`Ошибка регистрации: ${message}`)
-        // }
 
         const dto: CreateUserDto = req.body;
 
         try {
             const id = await this.authService.register(dto);
-            const token = this.authService.generateAccessToken(id);
+            const role = await this.authService.getRoleById(id)
+
+            const token = this.authService.generateAccessToken(id, role);
 
             return res.status(201).send({ id, token });
         } catch (e) {
@@ -40,7 +38,8 @@ export class AuthController {
 
         try {
             const id = await this.authService.login(dto);
-            const token = this.authService.generateAccessToken(id);
+            const role = await this.authService.getRoleById(id)
+            const token = this.authService.generateAccessToken(id, role);
 
             return res.status(200).send({ id, token });
         } catch (e) {
@@ -56,6 +55,8 @@ export class AuthController {
         }
     }
 
+    @Roles("admin")
+    @UseGuards(RolesGuard)
     @Get("/getUsers")
     async getUsers(@Res() res: Response) {
         const users = await this.authService.getUsers();

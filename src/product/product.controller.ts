@@ -1,4 +1,4 @@
-import { Controller, Post, Req, Res } from "@nestjs/common";
+import {Body, Controller, Post, Req, Res, UsePipes, ValidationPipe} from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Request, Response } from "express";
@@ -7,9 +7,11 @@ import { Request, Response } from "express";
 export class ProductController {
     constructor(private productService: ProductService) {}
 
+    @UsePipes(ValidationPipe)
     @Post("/addNewProduct")
-    async addNewProduct(@Req() req: Request, @Res() res: Response) {
-        const dto: CreateProductDto = req.body;
+
+    async addNewProduct(@Body() dto: CreateProductDto , @Res() res: Response) {
+        // const dto: CreateProductDto = req.body;
         try {
             const product = await this.productService.addNewProduct(dto);
             return res.status(200).json(product);

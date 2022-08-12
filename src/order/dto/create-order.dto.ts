@@ -8,5 +8,5 @@ export class CreateOrderDto {
     cartProducts: string[];
     amount: number;
     deliveryDetails: DeliveryDetails;
-    data: string;
+    date: string;
 }

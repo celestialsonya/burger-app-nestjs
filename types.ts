@@ -1,11 +1,16 @@
+import {ValidationError, ValidatorOptions} from "class-validator";
+
 export {};
 
-declare global {
-    namespace Express {
-        interface Request {
-            userData: any;
-        }
-    }
+import {Request} from "express"
+
+export interface UserData {
+	userId: number,
+    role: Role
+}
+
+export interface ExtendedRequest extends Request {
+	userData: UserData
 }
 
 export type CountableProduct = {
@@ -17,3 +22,9 @@ export type ProductQuantity = {
     product_id: number;
     quantity: number;
 };
+
+export enum Role {
+    USER = "user",
+    ADMIN = "admin",
+    WORKER = "worker"
+}

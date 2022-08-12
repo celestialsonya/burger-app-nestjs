@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { Injectable, NestMiddleware, Req, Res } from "@nestjs/common";
 import * as jwt from "jsonwebtoken";
+import {ExtendedRequest} from "../../../types";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-    async use(req: Request, res: Response, next: (error?: any) => void) {
+    async use(req: ExtendedRequest, res: Response, next: (error?: any) => void) {
         const header = req.headers?.authorization;
         if (!header) {
             return res.status(401).send("provide header!!");
@@ -17,7 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
 
             req.userData = {
                 userId: data.id,
-                cartId: data.cartId
+                role: data.role
             };
 
             next();
