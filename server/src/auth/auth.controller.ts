@@ -1,10 +1,11 @@
-import {Controller, Get, Inject, Post, Req, Res, UseGuards} from "@nestjs/common";
+import {Controller, Get, Post, Req, Res, UseGuards} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { InvalidUsername, UserAlreadyExists, UserDoesNotExist } from "./auth.errors";
 import {Roles} from "./roles-auth.decorator";
 import {RolesGuard} from "./quards/roles.quard";
+import {AssignRoleDto} from "./dto/assign-role.dto";
 
 @Controller("/users")
 export class AuthController {
@@ -61,5 +62,21 @@ export class AuthController {
     async getUsers(@Res() res: Response) {
         const users = await this.authService.getUsers();
         return res.status(200).json(users);
+    }
+
+    @Roles("admin")
+    @UseGuards(RolesGuard)
+    @Post("/assignRole")
+    async assignRole(@Req() req: Request, @Res() res: Response){
+
+        const dto: AssignRoleDto = req.body
+        try{
+            const user = await this.authService.assignRole(dto)
+            return res.status(200).json(user)
+        } catch (e) {
+            console.log(e)
+            return res.status(400).send("bad request!!");
+        }
+
     }
 }

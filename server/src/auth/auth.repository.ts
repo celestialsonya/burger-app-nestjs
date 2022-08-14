@@ -4,6 +4,7 @@ import { PoolClient } from "pg";
 import { User } from "../entities/User";
 import { CreateUserDto } from "./dto/create-user.dto";
 import {Role} from "../../types";
+import {AssignRoleDto} from "./dto/assign-role.dto";
 
 @Injectable()
 export class AuthRepository {
@@ -48,4 +49,14 @@ export class AuthRepository {
 
         return rows[0]
     }
+
+    async assignRole(dto: AssignRoleDto): Promise<User>{
+
+        const sql = "update users set role = $1 where id = $2 returning *"
+        const values = [dto.role, dto.userId]
+        const {rows} = await this.db.query(sql, values)
+
+        return rows[0]
+    }
+
 }

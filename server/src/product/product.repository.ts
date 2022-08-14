@@ -3,7 +3,6 @@ import { pg_conn } from "../packages/database/db.module";
 import { PoolClient } from "pg";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Product } from "../entities/Product";
-import { CartProduct } from "../entities/CartProduct";
 
 @Injectable()
 export class ProductRepository {
@@ -14,8 +13,7 @@ export class ProductRepository {
         const sql = "insert into product (name, description, price, category) values ($1, $2, $3, $4) returning *";
         const values = [name, description, price, category];
         const { rows } = await this.db.query(sql, values);
-        const product: Product = rows[0];
 
-        return product;
+        return rows[0];
     }
 }

@@ -5,6 +5,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { InvalidUsername, UserAlreadyExists, UserDoesNotExist } from "./auth.errors";
 import * as jwt from "jsonwebtoken";
 import {Role} from "../../types";
+import {AssignRoleDto} from "./dto/assign-role.dto";
 
 @Injectable()
 export class AuthService {
@@ -52,5 +53,9 @@ export class AuthService {
 
     async getRoleById(userId): Promise<Role>{
         return this.authRepository.getRoleById(userId)
+    }
+    
+    async assignRole(dto: AssignRoleDto): Promise<User>{
+        return this.authRepository.assignRole(dto)
     }
 }
